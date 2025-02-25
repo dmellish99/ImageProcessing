@@ -1,0 +1,1 @@
+Opening–Closing idempotence: True

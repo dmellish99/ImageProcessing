@@ -1,0 +1,1 @@
+Combined operation (closing then opening) is idempotent: True
