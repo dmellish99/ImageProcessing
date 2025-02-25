@@ -135,7 +135,7 @@ def identify_flatzone_local_max(img_path,input_txt_path):
         ## Finally, expunge the first value from the queue as it is has been processed.
         del waiting_queue[0]
 
-    print(neighbors_to_check)
+    # print(neighbors_to_check)
     is_local_maximum=1
     ## Iterate through neighbor pixels which don't have the same similiarity
     for a_neighbor in neighbors_to_check:
