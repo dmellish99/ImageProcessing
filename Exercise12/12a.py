@@ -196,7 +196,9 @@ input_txt_path='exercise_12a_input_01.txt'
 
 img_test_n_regions=identifyTotalFlatZones(test_img_path,input_txt_path)
 
-print(img_test_n_regions)
+with open('output/exercise_12a_output.txt','w') as file:
+    file.write(str(img_test_n_regions))
+    file.close()
 
 
 ## Test function on input image 2 
@@ -207,8 +209,9 @@ input_txt_path='exercise_12a_input_02.txt'
 
 img_test_n_regions=identifyTotalFlatZones(test_img_path,input_txt_path)
 
-print(img_test_n_regions)
-
+with open('output/exercise_12a_output.txt','w') as file:
+    file.write(str(img_test_n_regions))
+    file.close()
 
 
     
