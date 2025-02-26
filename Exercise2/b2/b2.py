@@ -17,18 +17,34 @@ def compare_images(image_path1, image_path2):
     Returns:
         bool: True if the images are equal, False otherwise.
     """
+    
+    ## Ingest Images from file paths
     img1 = cv2.imread(image_path1, cv2.IMREAD_GRAYSCALE)
-    if img1 is None:
-        raise ValueError(f"Unable to read image from '{image_path1}'. Check the path and format.")
-    
-    img2 = cv2.imread(image_path2, cv2.IMREAD_GRAYSCALE)
-    if img2 is None:
-        raise ValueError(f"Unable to read image from '{image_path2}'. Check the path and format.")
-    
-    if img1.shape != img2.shape:
+    img2=cv2.imread(image_path2, cv2.IMREAD_GRAYSCALE)
+
+
+    ## Check n_pixels
+    if img1.size!=img2.size:
         return False
     
-    return np.array_equal(img1, img2)
+    are_equal=True
+
+    ## Set dimensions
+    nrows=img1.shape[0]
+    ncols=img1.shape[1]
+        
+    ## Iterate through each row and column (each pixel)
+    for row in range(0,nrows):
+        for col in range(0,ncols):
+            ## Set a value for the current pixel of each image
+            cur_pixel_img1=img1[row,col]
+            cur_pixel_img2=img2[row,col]
+            ## Check for equality, and set to false if values are not equal
+            if cur_pixel_img1!=cur_pixel_img2:
+                are_equal=False
+
+    return are_equal
+    
 
 def run():
     """

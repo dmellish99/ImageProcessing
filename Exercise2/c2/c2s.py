@@ -11,22 +11,36 @@ def sup_images(image_path1, image_path2):
         image_path2 (str): Path to the second input PGM image.
         
     Returns:
-        sup_img: The resulting image obtained by taking the pixel-wise maximum.
+        new_img: The resulting image obtained by taking the pixel-wise maximum.
     """
+
+    ## Read image file paths
     img1 = cv2.imread(image_path1, cv2.IMREAD_GRAYSCALE)
-    if img1 is None:
-        raise ValueError(f"Unable to read image from '{image_path1}'. Check the path and format.")
+    img2=cv2.imread(image_path2, cv2.IMREAD_GRAYSCALE)
     
-    img2 = cv2.imread(image_path2, cv2.IMREAD_GRAYSCALE)
-    if img2 is None:
-        raise ValueError(f"Unable to read image from '{image_path2}'. Check the path and format.")
+    ## Set a copy of the first image for output later
+    new_img=img1
     
-    if img1.shape != img2.shape:
-        raise ValueError("Input images must have the same dimensions.")
+    ## Check n_pixels
+    if img1.size!=img2.size:
+        raise ValueError("Images Sizes are not Equal")
     
-    # Compute pixel-wise maximum (supremum)
-    sup_img = cv2.max(img1, img2)
-    return sup_img
+    ## Continue with code if image sizes are equal
+    else:
+        ## Set dimensions of images
+        nrows=img1.shape[0]
+        ncols=img1.shape[1]
+        
+        ## Iterate through each row and column (each pixel)
+        for row in range(0,nrows):
+            for col in range(0,ncols):
+                ## Set a value for the current pixel of each image
+                cur_pixel_img1=img1[row,col]
+                cur_pixel_img2=img2[row,col]
+                ## Use the Max of the two pixels if Inf
+                new_img[row,col]=max(cur_pixel_img1,cur_pixel_img2)
+    
+    return new_img
 
 def run():
     """
