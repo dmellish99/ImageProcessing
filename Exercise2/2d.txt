@@ -1,0 +1,35 @@
+
+
+
+In exercise 2d, we are given the following stuctured objects 
+
+Object B: A square MxM
+
+Object C: A 1xM rectangle
+
+Object D: An Mx1 rectangle
+
+An input Image I with NxN pixels 
+
+It is provided information that the dilation of I with structuring element B is equivalent to the dilation of I with the structuring of element D followed by the dilation of this image with 
+structuring element C.
+
+For any given max operation of E elements, there are E-1 objects which must be compared, as the first object can be assumed to be the max, and then each successive object can be compared to the first.
+Similarly, a dilation (assuming 8-neighbor connectivity) with a structuring object of MxM would have (M^2) objects involved. If the initial pixel  is 
+assumed to be the max, this leads to M^2-1 comparisons/operations required for each pixel. The last step would be to factor in the total number of pixels. In this case, there are N^2 pixels for the image I. 
+
+Therefore, the total amount of operations required for the dilation of I with structuring element B is 
+N^2 *(M^2-1)
+
+
+
+Similarly, when applying a dilation of I with structuring element D followed by a dilation with stucturing element C, we can individually calculate the total operations of each. 
+As mentioned before, for any given max operation of E elements, there are E-1 objects which must be compared, the first object can be assumed to be the maximum, and then each successive object can be compared to the first.
+Similarly, a dilation (assuming 8-neighbor connectivity) with a structuring object of Mx1 would have (M) objects involved. If the initial pixel  is assumed to be the max, this leads to M-1 comparisons. This can then be multiplied by the number of pixels in the image which is N^2. 
+
+
+And so, the total number of operations for the dilation of Image I with object D is N^2(M-1), however the number of operations required for dilation with structuring object c must be taken into account.
+
+Object C has the same structure as object D (1xM vs Mx1), it is just that various columns are considered as opposed to rows.
+
+This in turn will lead to N^2(M-1) comparisons, and thus when added to the total operations from the dilation with object d, the result is 2*N^2(M-1) 
