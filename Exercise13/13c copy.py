@@ -5,7 +5,7 @@ import numpy as np
 import math
 
 
-def identify_flatzone_local_maxima(img,row,col):
+def identify_flatzone_local_minima(img,row,col):
  
 
     ## Establish dimensinos of image
@@ -27,8 +27,8 @@ def identify_flatzone_local_maxima(img,row,col):
     ## Create a binary matrix that will flag pixels which have already been processed
     processed_status=np.zeros((nrows, ncols))
 
-    ## Create a binary matrix that will flag pixels which are local maxima
-    local_max=np.zeros((nrows, ncols))
+    ## Create a binary matrix that will flag pixels which are local Minima
+    local_min=np.zeros((nrows, ncols))
 
     ## Create a binary matrix that will flag pixels belonging to the region
     flatzone=np.zeros((nrows,ncols))
@@ -144,7 +144,7 @@ def identify_flatzone_local_maxima(img,row,col):
     
 
     # print(len(neighbors_to_check))
-    is_local_maximum=0
+    is_local_minimum=0
     n_pixels_greater_than_region=0
     ## Iterate through neighbor pixels which don't have the same similiarity
     for a_neighbor in neighbors_to_check:
@@ -154,28 +154,28 @@ def identify_flatzone_local_maxima(img,row,col):
         neighbor_pixel=img[neighbor_row,neighbor_col]
         # print(selected_pixel_intensity)
         # print(neighbor_pixel)
-        if neighbor_pixel>selected_pixel_intensity :
+        if neighbor_pixel<selected_pixel_intensity:
             n_pixels_greater_than_region+=1
     if n_pixels_greater_than_region==0:
-        is_local_maximum=1
+        is_local_minimum=1
     
     
 
-    if is_local_maximum==1:
+    if is_local_minimum==1:
 
         for coord_pair in region_coords:
-            local_max_row=coord_pair[0]
-            local_max_col=coord_pair[1]
+            local_min_row=coord_pair[0]
+            local_min_col=coord_pair[1]
 
-            local_max[local_max_row,local_max_col]=1
-        # print(np.where(local_max==1))
+            local_min[local_min_row,local_min_col]=1
+        # print(np.where(local_min==1))
 
             
     ## Return flat image and indicator if it is a local max
-    return [flatzone,local_max]
+    return [flatzone,local_min]
 
 
-def identifylocalMaxima(img_path):
+def identifylocalMinima(img_path):
 
     ## Read image path
     img=cv2.imread(img_path,cv2.IMREAD_GRAYSCALE)
@@ -205,21 +205,21 @@ def identifylocalMaxima(img_path):
             ## Check if pixel has been processed already
             if processed[row,col]==0:
                 ## If not, run the flatzone algo
-                identified_flatzone=identify_flatzone_local_maxima(img,row,col)
+                identified_flatzone=identify_flatzone_local_minima(img,row,col)
                 
                 flatzone=identified_flatzone[0]
                 
 
-                local_max=identified_flatzone[1]
+                local_min=identified_flatzone[1]
                 
                 
                 ## only select the region which is connected
-                local_max=np.where(local_max==1)
-                # print(local_max)
+                local_min=np.where(local_min==1)
+                # print(local_min)
 
                 
 
-                local_max_coords=list(zip(*local_max))
+                local_min_coords=list(zip(*local_min))
 
                 flatzone=np.where(flatzone==1)
 
@@ -231,8 +231,8 @@ def identifylocalMaxima(img_path):
 
                     processed[row_to_mark,col_to_mark]=1
                 
-                if len(local_max_coords)>0:
-                    for coord_pair in local_max_coords:
+                if len(local_min_coords)>0:
+                    for coord_pair in local_min_coords:
                         row_to_mark=coord_pair[0]
                         col_to_mark=coord_pair[1]
 
@@ -245,14 +245,13 @@ def identifylocalMaxima(img_path):
 ## Test function on input image 1
 
 
-## Test function on input image 2 
 
 test_img_path='src/immed_gray_inv_20051218_frgr4.pgm'
 
 
-img_test_local_maxima=identifylocalMaxima(test_img_path)
+img_test_local_minima=identifylocalMinima(test_img_path)
 
-cv2.imwrite('output/exercise_13d_output_01.pgm',img_test_local_maxima)
+cv2.imwrite('output/exercise_13c_output_01.pgm',img_test_local_minima)
 
 
     

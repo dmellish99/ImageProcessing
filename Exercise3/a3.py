@@ -35,6 +35,8 @@ def custom_erosion(img, kernel_size):
 
     return out
 
+
+
 def run():
     """
     Main function for Exercise 03a (Erosion).
