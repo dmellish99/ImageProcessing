@@ -2,16 +2,54 @@
 import sys
 import cv2
 import numpy as np
-import math
+import os
 
 
+def main():
 
-def identify_flatzone_local_max(img_path,input_txt_path):
+    """
+    Checks if the flatzone of a given pixel for an image is a local minima.
+    
+    Usage:
+      python exercise_13b.py <input_image_path> <input_txt_path>
+      
+      where:
+       - <img_path> is the path to the input PGM image
+       - <input_text_file> is the path to the text file where the parameters are specified
+       
+    If no arguments are provided, default values are used:
+      - input_image: src/immed_gray_inv_20051218_frgr4.pgm
+      - input_text_file: exercise_13a_input_01.txt
+
+
+    The output will be provided in output/exercise_13b_output.txt
+
+    """
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+
+    if len(sys.argv) == 1:
+        input_image_path = os.path.join(script_dir, "src", "immed_gray_inv_20051218_frgr4.pgm")
+        input_text_path = "exercise_13b_input_01.txt"
+        print("No arguments provided. Using default values:")
+        print("  Input image:", input_image_path)
+        print("  Input text file:", input_text_path)
+    elif len(sys.argv) < 3:
+        print("Usage: python exercise_13b.py <i> <input_image_path> <input_text_file>")
+        sys.exit(1)
+    else:
+        input_image_path = sys.argv[1]
+        input_text_path = sys.argv[2]
+
 
     ## Read image path
-    img=cv2.imread(img_path,cv2.IMREAD_GRAYSCALE)
+    img=cv2.imread(input_image_path,cv2.IMREAD_GRAYSCALE)
 
-    with open(input_txt_path) as file:
+    output_text_path="output/exercise_13b_output.txt"
+
+
+    with open(input_text_path) as file:
         content=file.readlines()
         a_col=int(content[0])
         a_row=int(content[1])
@@ -87,10 +125,9 @@ def identify_flatzone_local_max(img_path,input_txt_path):
             coords_to_check=[]
 
 
-            ## Add four neighbors (will check later if they are valid pixels)
+
             ## Add pixel above
             coords_to_check.append((row-1,col))
-            
             ## Add pixel below
             coords_to_check.append((row+1,col))
             
@@ -99,18 +136,20 @@ def identify_flatzone_local_max(img_path,input_txt_path):
             
             ## Add pixel to the left
             coords_to_check.append((row,col-1))
+    
+            ## Case where neighbor connectivity is 8 
+            if neighbor_connectivity==8:
+                ## Add pixel diagonally upper left 
+                coords_to_check.append((row-1,col-1))
 
-            ## Add pixel diagonally upper left 
-            coords_to_check.append((row-1,col-1))
+                ## Add pixel diagonally upper right
+                coords_to_check.append((row-1,col+1))
 
-            ## Add pixel diagonally upper right
-            coords_to_check.append((row-1,col+1))
+                ## Add pixel diagonally lower left
+                coords_to_check.append((row+1,col-1))
 
-            ## Add pixel diagonally lower left
-            coords_to_check.append((row+1,col-1))
-
-            ## Add pixel diagonally lower right
-            coords_to_check.append((row+1,col+1))
+                ## Add pixel diagonally lower right
+                coords_to_check.append((row+1,col+1))
 
             ## Ensure that pixel coordinates which exceed the image dimension are NOT added
             for coord in coords_to_check:
@@ -150,32 +189,37 @@ def identify_flatzone_local_max(img_path,input_txt_path):
         is_local_max=1
 
 
+    with open(output_text_path,'w') as file:
+        file.write(str(is_local_max))
+        file.close()
+
+
     return is_local_max
 
 
-## Test function on input image
+# ## Test function on input image
 
 
-test_img_path='src/immed_gray_inv_20051218_frgr4.pgm'
+# test_img_path='src/immed_gray_inv_20051218_frgr4.pgm'
 
-input_txt_path='exercise_13b_input_01.txt'
+# input_txt_path='exercise_13b_input_01.txt'
 
-img_test=identify_flatzone_local_max(test_img_path,input_txt_path)
-
-
-with open('output/exercise_13b_output_01.txt','w') as file:
-    file.write(str(img_test))
-    file.close()
+# img_test=identify_flatzone_local_max(test_img_path,input_txt_path)
 
 
 
-test_img_path='src/immed_gray_inv_20051218_frgr4.pgm'
-
-input_txt_path='exercise_13b_input_02.txt'
-
-img_test=identify_flatzone_local_max(test_img_path,input_txt_path)
 
 
-with open('output/exercise_13b_output_02.txt','w') as file:
-    file.write(str(img_test))
-    file.close()
+# test_img_path='src/immed_gray_inv_20051218_frgr4.pgm'
+
+# input_txt_path='exercise_13b_input_02.txt'
+
+# img_test=identify_flatzone_local_max(test_img_path,input_txt_path)
+
+
+# with open('output/exercise_13b_output_02.txt','w') as file:
+#     file.write(str(img_test))
+#     file.close()
+
+if __name__ == "__main__":
+    main()

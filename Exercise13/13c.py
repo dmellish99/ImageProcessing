@@ -2,14 +2,51 @@
 import sys
 import cv2
 import numpy as np
-import math
+import os
 
 
 
-def identifylocalMinima(img_path):
+def main():
+
+    """
+    Checks for all flatzones of an image which are local minima.
+    
+    Usage:
+      python exercise_13c.py <input_image_path>
+      
+      where:
+       - <input_image_path> is the path to the input PGM image
+       
+    If no arguments are provided, default values are used:
+      - input_image: src/immed_gray_inv_20051218_frgr4.pgm
+
+
+    The output image will be provided in output/exercise_13c_output.pgm
+
+    """
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+
+    if len(sys.argv) == 1:
+        input_image_path = os.path.join(script_dir, "src", "immed_gray_inv_20051218_frgr4.pgm")
+        print("No arguments provided. Using default values:")
+        print("  Input image:", input_image_path)
+    elif len(sys.argv) < 2:
+        print("Usage: python exercise_13c.py <i> <input_image_path> ")
+        sys.exit(1)
+    else:
+        input_image_path = sys.argv[1]
 
     ## Read image path
-    img=cv2.imread(img_path,cv2.IMREAD_GRAYSCALE)
+    img=cv2.imread(input_image_path,cv2.IMREAD_GRAYSCALE)
+
+    output_image_path="output/exercise_13c_output.pgm"
+
+
+
+    ## Read image path
+    img=cv2.imread(input_image_path,cv2.IMREAD_GRAYSCALE)
 
 
     
@@ -143,17 +180,20 @@ def identifylocalMinima(img_path):
                 for row_idx, col_idx in region_coords:
                     out[row_idx, col_idx] = 255  # Mark local minima flat zones in white
 
-
+    ## Output image to file 
+    
+    cv2.imwrite(output_image_path,out)
     return out
 
-## Test function on input image 1
-test_img_path='src/immed_gray_inv_20051218_frgr4.pgm'
+# ## Test function on input image 1
+# test_img_path='src/immed_gray_inv_20051218_frgr4.pgm'
 
 
-img_test_local_minima=identifylocalMinima(test_img_path)
+# img_test_local_minima=identifylocalMinima(test_img_path)
 
-cv2.imwrite('output/exercise_13c_output_01.pgm',img_test_local_minima)
+# cv2.imwrite('output/exercise_13c_output_01.pgm',img_test_local_minima)
 
 
-    
+if __name__ == "__main__":
+    main()
         

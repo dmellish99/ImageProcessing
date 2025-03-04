@@ -25,7 +25,6 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
     if len(sys.argv) == 1:
-        i = 1
         input_image_path = os.path.join(script_dir, "src", "cam_74.pgm")
         output_text_path = os.path.join(script_dir, "output", "exercise_05a_result.txt")
         print("No arguments provided. Using default values:")
