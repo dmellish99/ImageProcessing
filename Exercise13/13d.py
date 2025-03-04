@@ -5,181 +5,12 @@ import numpy as np
 import math
 
 
-def identify_flatzone_local_maxima(img,row,col):
- 
-
-    ## Establish dimensinos of image
-    nrows=img.shape[0]
-    ncols=img.shape[1]
-
-
-
-    # for label_intensity_value in range(0,256):
-
-        # Output image of the same size as the original (but will be modified later).
-   
-
-    minrow=0
-    maxrow=nrows
-    mincol=0
-    maxcol=ncols
-
-    ## Create a binary matrix that will flag pixels which have already been processed
-    processed_status=np.zeros((nrows, ncols))
-
-    ## Create a binary matrix that will flag pixels which are local maxima
-    local_max=np.zeros((nrows, ncols))
-
-    ## Create a binary matrix that will flag pixels belonging to the region
-    flatzone=np.zeros((nrows,ncols))
-
-    unique_pixels=np.unique(img).tolist()
-
-    # print(unique_pixels)
-    # print(maxrow)
-    # print(maxcol)
- 
-
-    selected_pixel_intensity=img[row,col]
-    # print(selected_pixel_intensity)
-
-    label_intensity_value=selected_pixel_intensity
-
-    processed_status[row,col]=1
-    
-    waiting_queue=[(row,col)]
-
-
-    region_coords=[]
-
-    while len(waiting_queue)>0:
-        
-
-        cur_row=waiting_queue[0][0]
-        cur_col=waiting_queue[0][1]
-        
-
-        
-        cur_pixel_val=img[cur_row,cur_col]
-        
-
-        ## Initialize various lists
-        valid_neighbors=[]
-        coords_to_check=[]
-        neighbors_to_check=[]
-
-
-        ## Add four neighbors (will check later if they are valid pixels)
-        ## Add pixel above
-        coords_to_check.append((cur_row-1,cur_col))
-        
-        ## Add pixel below
-        coords_to_check.append((cur_row+1,cur_col))
-        
-        ## Add pixel to the right
-        coords_to_check.append((cur_row,cur_col+1))
-        
-        ## Add pixel to the left
-        coords_to_check.append((cur_row,cur_col-1))
-
-        ## Add pixel diagonally upper left 
-        coords_to_check.append((cur_row-1,cur_col-1))
-
-        ## Add pixel diagonally upper right
-        coords_to_check.append((cur_row-1,cur_col+1))
-
-        ## Add pixel diagonally lower left
-        coords_to_check.append((cur_row+1,cur_col-1))
-
-        ## Add pixel diagonally lower right
-        coords_to_check.append((cur_row+1,cur_col+1))
-
-        ## Ensure that no pixel coordinates which exceed the image dimension are NOT added
-        for coord in coords_to_check:
-
-            row_idx=coord[0]
-            col_idx=coord[1]
-            
-            if (row_idx>=minrow and row_idx<=maxrow-1) and (col_idx>=mincol and col_idx<=maxcol-1):
-                    valid_neighbors.append(coord)
-
-    
-        ## Iterate through each neighbor of the valid pixels to check
-        for neighbor in valid_neighbors:
-
-            row_idx=neighbor[0]
-            col_idx=neighbor[1]
-
-
-
-
-         ## Check if the neighbor matches the pixel intensity of a selected pixel and also ensure that it hasn't been processed.
-            if img[row_idx,col_idx]==selected_pixel_intensity and processed_status[row_idx,col_idx]==0:
-               
-                ## Add the neighbor pixel to the waiting queue
-
-                waiting_queue.append((row_idx,col_idx))
-
-                flatzone[row_idx,col_idx]=1
-
-                ## Set processed status=label intensity_value to ensure pixel won't be re-added to the queue
-                processed_status[row_idx,col_idx]=1
-
-                ## Add proper coordinates to region coords list for later
-                region_coords.append((row_idx,col_idx))
-
-            
-            elif img[row_idx,col_idx]!=selected_pixel_intensity and processed_status[row_idx,col_idx]==0 :
-                ## Set processed status=label intensity_value to ensure pixel won't be re-added to the queue
-                processed_status[row_idx,col_idx]=1
-
-                ## Add the coordinates to a list of neighbors_to_check
-                neighbors_to_check.append((row_idx,col_idx))
-
-
-            
-        ## Finally, expunge the first value from the queue as it is has been processed.
-        del waiting_queue[0]
-
-    
-
-    # print(len(neighbors_to_check))
-    is_local_maximum=0
-    n_pixels_greater_than_region=0
-    ## Iterate through neighbor pixels which don't have the same similiarity
-    for a_neighbor in neighbors_to_check:
-        neighbor_row=a_neighbor[0]
-        neighbor_col=a_neighbor[1]
-
-        neighbor_pixel=img[neighbor_row,neighbor_col]
-        # print(selected_pixel_intensity)
-        # print(neighbor_pixel)
-        if neighbor_pixel>selected_pixel_intensity :
-            n_pixels_greater_than_region+=1
-    if n_pixels_greater_than_region==0:
-        is_local_maximum=1
-    
-    
-
-    if is_local_maximum==1:
-
-        for coord_pair in region_coords:
-            local_max_row=coord_pair[0]
-            local_max_col=coord_pair[1]
-
-            local_max[local_max_row,local_max_col]=1
-        # print(np.where(local_max==1))
-
-            
-    ## Return flat image and indicator if it is a local max
-    return [flatzone,local_max]
-
 
 def identifylocalMaxima(img_path):
 
     ## Read image path
     img=cv2.imread(img_path,cv2.IMREAD_GRAYSCALE)
-    
+
 
     
     ## Establish dimensinos of image
@@ -190,69 +21,138 @@ def identifylocalMaxima(img_path):
     ## Set for output image
     out=np.zeros((nrows, ncols))
 
-    ## Set a process status
-    processed=np.zeros((nrows,ncols))
-
     minrow=0
     maxrow=nrows
     mincol=0
     maxcol=ncols
 
 
-    for row in range(minrow,maxrow):
+    ## Create a binary matrix that will flag pixels which have already been processed
+    processed_status=np.zeros((nrows, ncols))
+    
 
-        for col in range(mincol,maxcol):
-            ## Check if pixel has been processed already
-            if processed[row,col]==0:
-                ## If not, run the flatzone algo
-                identified_flatzone=identify_flatzone_local_maxima(img,row,col)
+    for a_row in range(minrow,maxrow):
+
+        for a_col in range(mincol,maxcol):
+
+          
+            if processed_status[a_row,a_col]==0:
+
+                ## Initialize Region Coordinates
+                region_coords=[]
+
+                neighbor_distinct_vals=[]
+
+
+                ## Establish a waiting queue
+                waiting_queue=[(a_row,a_col)]
+
                 
-                flatzone=identified_flatzone[0]
+                while len(waiting_queue)>0:
+
+                    selected_pixel=waiting_queue.pop(0)
+
+
+
+                    row=selected_pixel[0]
+                    col=selected_pixel[1]
+
+
+                    selected_pixel_intensity=img[row,col]
+
+
+
+                    if processed_status[row, col]==1:
+                        continue
+
+
+                    processed_status[row, col]=1
+
+
+
+                    ## Add the value to the list of region coords
+                    region_coords.append((row, col))
+
+                    
+                    
+
+                    ## Initialize various lists
+                    valid_neighbors=[]
+                    coords_to_check=[]
+
+
+                    ## Add four neighbors (will check later if they are valid pixels)
+                    ## Add pixel above
+                    coords_to_check.append((row-1,col))
+                    
+                    ## Add pixel below
+                    coords_to_check.append((row+1,col))
+                    
+                    ## Add pixel to the right
+                    coords_to_check.append((row,col+1))
+                    
+                    ## Add pixel to the left
+                    coords_to_check.append((row,col-1))
+
+                    ## Add pixel diagonally upper left 
+                    coords_to_check.append((row-1,col-1))
+
+                    ## Add pixel diagonally upper right
+                    coords_to_check.append((row-1,col+1))
+
+                    ## Add pixel diagonally lower left
+                    coords_to_check.append((row+1,col-1))
+
+                    ## Add pixel diagonally lower right
+                    coords_to_check.append((row+1,col+1))
+
+                    ## Ensure that pixel coordinates which exceed the image dimension are NOT added
+                    for coord in coords_to_check:
+
+                        row_idx=coord[0]
+                        col_idx=coord[1]
+                        
+                        if (row_idx>=minrow and row_idx<=maxrow-1) and (col_idx>=mincol and col_idx<=maxcol-1):
+                            valid_neighbors.append((row_idx,col_idx))
                 
+                    ## Iterate through each neighbor of the valid pixels to check
+                    for neighbor in valid_neighbors:
 
-                local_max=identified_flatzone[1]
-                
-                
-                ## only select the region which is connected
-                local_max=np.where(local_max==1)
-                # print(local_max)
+                        row_idx=neighbor[0]
+                        col_idx=neighbor[1]
 
-                
+                        # neighbor_distinct_vals.append(img[row_idx,col_idx])
 
-                local_max_coords=list(zip(*local_max))
 
-                flatzone=np.where(flatzone==1)
 
-                flatzone_coords=list(zip(*flatzone))
+                    ## Check if the neighbor matches the pixel intensity of a selected pixel and also ensure that it hasn't been processed.
+                        if img[row_idx,col_idx]==selected_pixel_intensity and processed_status[row_idx,col_idx]==0:
+                        
+                            ## Add the neighbor pixel to the waiting queue
 
-                for coord_pair in flatzone_coords:
-                    row_to_mark=coord_pair[0]
-                    col_to_mark=coord_pair[1]
+                            waiting_queue.append((row_idx,col_idx))
 
-                    processed[row_to_mark,col_to_mark]=1
-                
-                if len(local_max_coords)>0:
-                    for coord_pair in local_max_coords:
-                        row_to_mark=coord_pair[0]
-                        col_to_mark=coord_pair[1]
+                        elif img[row_idx,col_idx]!=selected_pixel_intensity:
 
-                        out[row_to_mark,col_to_mark]=255
-                
+                            ## Add pixel intensity to neighbors list
+                            neighbor_distinct_vals.append(img[row_idx,col_idx])
+
+    
+            ## Set output to 255 if local minimum is detected
+            if len(neighbor_distinct_vals)>0 and selected_pixel_intensity>max(neighbor_distinct_vals):
+                for row_idx, col_idx in region_coords:
+                    out[row_idx, col_idx] = 255  # Mark local minima flat zones in white
 
 
     return out
 
 ## Test function on input image 1
-
-
-## Test function on input image 2 
-
 test_img_path='src/immed_gray_inv_20051218_frgr4.pgm'
 
 
-img_test_local_maxima=identifylocalMaxima(test_img_path)
+img_test_local_minima=identifylocalMaxima(test_img_path)
 
-cv2.imwrite('output/exercise_13d_output_01.pgm',img_test_local_maxima)
+cv2.imwrite('output/exercise_13d_output_01.pgm',img_test_local_minima)
 
 
     
