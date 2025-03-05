@@ -12,13 +12,15 @@ def main():
     Checks for all flatzones of an image which are local minima.
     
     Usage:
-      python exercise_13c.py <input_image_path>
+      python exercise_13c.py <input_image_path> <output_image_path>
       
       where:
        - <input_image_path> is the path to the input PGM image
+       - <output_image_path> is the path to the output PGM image
        
     If no arguments are provided, default values are used:
-      - input_image: src/immed_gray_inv_20051218_frgr4.pgm
+      - input_image_path: src/immed_gray_inv_20051218_frgr4.pgm
+      - output_image_path: output/exercise_13c_output.pgm
 
 
     The output image will be provided in output/exercise_13c_output.pgm
@@ -30,18 +32,21 @@ def main():
 
     if len(sys.argv) == 1:
         input_image_path = os.path.join(script_dir, "src", "immed_gray_inv_20051218_frgr4.pgm")
+        output_image_path="output/exercise_13c_output.pgm"
         print("No arguments provided. Using default values:")
         print("  Input image:", input_image_path)
-    elif len(sys.argv) < 2:
-        print("Usage: python exercise_13c.py <i> <input_image_path> ")
+        print("  Input image:", output_image_path)
+
+    elif len(sys.argv) < 3:
+        print("Usage: python exercise_13d.py <i> <input_image_path> <output_image_path>")
         sys.exit(1)
     else:
         input_image_path = sys.argv[1]
+        output_image_path=sys.argv[2]
 
     ## Read image path
     img=cv2.imread(input_image_path,cv2.IMREAD_GRAYSCALE)
 
-    output_image_path="output/exercise_13c_output.pgm"
 
 
 

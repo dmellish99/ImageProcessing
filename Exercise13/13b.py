@@ -8,48 +8,45 @@ import os
 def main():
 
     """
-    Checks if the flatzone of a given pixel for an image is a local minima.
+    Checks if the flatzone of a given pixel for an image is a local maxima.
     
     Usage:
-      python exercise_13b.py <input_image_path> <input_txt_path>
+      python exercise_13b.py <input_image_path> <input_text_file> <output_text_path>
       
       where:
-       - <img_path> is the path to the input PGM image
+       - <input_image_path> is the path to the input PGM image
        - <input_text_file> is the path to the text file where the parameters are specified
+       - <output_text_path> is the path to the output text_file
        
     If no arguments are provided, default values are used:
-      - input_image: src/immed_gray_inv_20051218_frgr4.pgm
-      - input_text_file: exercise_13a_input_01.txt
-
-
-    The output will be provided in output/exercise_13b_output.txt
-
+      - input_image: src/immed_gray_inv.pgm
+      - input_text_file: exercise_13b_input_01.txt
+      - output_text_path will be provided in output/exercise_13b_output.txt
+    
     """
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
 
     if len(sys.argv) == 1:
-        input_image_path = os.path.join(script_dir, "src", "immed_gray_inv_20051218_frgr4.pgm")
-        input_text_path = "exercise_13b_input_01.txt"
+        input_image_path = os.path.join(script_dir, "src", "immed_gray_inv.pgm")
+        input_text_file = "exercise_12a_input_01.txt"
+        output_text_path='output/exercise_13a_output.txt'
+
         print("No arguments provided. Using default values:")
         print("  Input image:", input_image_path)
-        print("  Input text file:", input_text_path)
-    elif len(sys.argv) < 3:
-        print("Usage: python exercise_13b.py <i> <input_image_path> <input_text_file>")
+    elif len(sys.argv) < 4:
+        print("Usage: python exercise_13a.py <input_image_path> <input_text_file>")
         sys.exit(1)
     else:
         input_image_path = sys.argv[1]
-        input_text_path = sys.argv[2]
+        input_text_file = sys.argv[2]
+        output_text_path=sys.argv[3]
+
+    print(input_image_path)
 
 
-    ## Read image path
-    img=cv2.imread(input_image_path,cv2.IMREAD_GRAYSCALE)
-
-    output_text_path="output/exercise_13b_output.txt"
-
-
-    with open(input_text_path) as file:
+    with open(input_text_file) as file:
         content=file.readlines()
         a_col=int(content[0])
         a_row=int(content[1])
@@ -59,6 +56,8 @@ def main():
         file.close()
 
    
+    ## Read image path
+    img=cv2.imread(input_image_path,cv2.IMREAD_GRAYSCALE)
 
 
     

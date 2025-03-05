@@ -12,17 +12,17 @@ def main():
     Checks if the flatzone of a given pixel for an image is a local minima.
     
     Usage:
-      python exercise_13a.py <input_image_path> <input_text_file>
+      python exercise_13a.py <input_image_path> <input_text_file> <output_text_path>
       
       where:
        - <input_image_path> is the path to the input PGM image
        - <input_text_file> is the path to the text file where the parameters are specified
+       - <output_text_path> is the path to the output text_file
        
     If no arguments are provided, default values are used:
       - input_image: src/immed_gray_inv.pgm
-      - input_text_file: exercise_12a_input_01.txt
-    
-    The output will be provided in output/exercise_13a_output.txt
+      - input_text_file: exercise_13a_input_01.txt
+      - output_text_path will be provided in output/exercise_13a_output.txt
     
     """
 
@@ -32,19 +32,20 @@ def main():
     if len(sys.argv) == 1:
         input_image_path = os.path.join(script_dir, "src", "immed_gray_inv.pgm")
         input_text_file = "exercise_12a_input_01.txt"
-        output_text_path="output/exercise_12a_output_01.txt"
+        output_text_path='output/exercise_13a_output.txt'
+
         print("No arguments provided. Using default values:")
         print("  Input image:", input_image_path)
-    elif len(sys.argv) < 3:
+    elif len(sys.argv) < 4:
         print("Usage: python exercise_13a.py <input_image_path> <input_text_file>")
         sys.exit(1)
     else:
         input_image_path = sys.argv[1]
         input_text_file = sys.argv[2]
+        output_text_path=sys.argv[3]
 
     print(input_image_path)
 
-    output_text_path='output/exercise_13a_output.txt'
 
 
 
