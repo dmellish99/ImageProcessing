@@ -19,8 +19,8 @@ def main():
        - <input_text_file> is the path to the text file where the parameters are specified
        
     If no arguments are provided, default values are used:
-      - input_image: src/immed_gray_inv_20051218_frgr4.pgm
-      - input_text_file: exercise_13a_input_01.txt
+      - input_image: src/immed_gray_inv.pgm
+      - input_text_file: exercise_12a_input_01.txt
     
     The output will be provided in output/exercise_13a_output.txt
     
@@ -30,13 +30,13 @@ def main():
 
 
     if len(sys.argv) == 1:
-        input_image_path = os.path.join(script_dir, "src", "immed_gray_inv_20051218_frgr4.pgm")
-        input_text_file = "exercise_13a_input_01.txt"
-        output_text_path="output/exercise_13a_output_01.txt"
+        input_image_path = os.path.join(script_dir, "src", "immed_gray_inv.pgm")
+        input_text_file = "exercise_12a_input_01.txt"
+        output_text_path="output/exercise_12a_output_01.txt"
         print("No arguments provided. Using default values:")
         print("  Input image:", input_image_path)
     elif len(sys.argv) < 3:
-        print("Usage: python exercise_05a.py <input_image_path> <input_text_file>")
+        print("Usage: python exercise_13a.py <input_image_path> <input_text_file>")
         sys.exit(1)
     else:
         input_image_path = sys.argv[1]
