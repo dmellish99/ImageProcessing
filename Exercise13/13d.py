@@ -9,57 +9,44 @@ import os
 def main():
 
     """
-    Checks if the flatzone of a given pixel for an image is a local minima.
+    Checks for all flatzones of an image which are local maxima.
     
     Usage:
-      python exercise_13a.py <input_image_path> <input_text_file>
+      python exercise_13d.py <input_image_path>
       
       where:
        - <input_image_path> is the path to the input PGM image
-       - <input_text_file> is the path to the text file where the parameters are specified
        
     If no arguments are provided, default values are used:
       - input_image: src/immed_gray_inv_20051218_frgr4.pgm
-      - input_text_file: exercise_12a_input_01.txt
-    
-    The output will be provided in output/exercise_12a_output.txt
-    
+
+
+    The output image will be provided in output/exercise_13d_output.pgm
+
     """
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
 
     if len(sys.argv) == 1:
-        input_image_path = os.path.join(script_dir, "src", "immed_gray_inv.pgm")
-        input_text_file="exercise_12a_input_01.txt"
+        input_image_path = os.path.join(script_dir, "src", "immed_gray_inv_20051218_frgr4.pgm")
         print("No arguments provided. Using default values:")
         print("  Input image:", input_image_path)
-        print()
-    elif len(sys.argv) < 3:
-        print("Usage: python exercise_12a.py <input_image_path> <input_text_file>")
+    elif len(sys.argv) < 2:
+        print("Usage: python exercise_13d.py <i> <input_image_path> ")
         sys.exit(1)
     else:
-        input_image_path=sys.argv[1]
-        input_text_file = sys.argv[2]
+        input_image_path = sys.argv[1]
 
-    print(input_image_path)
+    ## Read image path
+    img=cv2.imread(input_image_path,cv2.IMREAD_GRAYSCALE)
 
-    output_text_path='output/exercise_12a_output.txt'
+    output_image_path="output/exercise_13d_output.pgm"
 
 
 
     ## Read image path
     img=cv2.imread(input_image_path,cv2.IMREAD_GRAYSCALE)
-
-    with open(input_text_file) as file:
-        content=file.readlines()
-
-        neighbor_connectivity=int(content[0])
-        # label_intensity_value=int(content[3])
-
-        file.close()
-
-   
 
 
     
@@ -67,33 +54,32 @@ def main():
     nrows=img.shape[0]
     ncols=img.shape[1]
 
-
+    
+    ## Set for output image
+    out=np.zeros((nrows, ncols))
 
     minrow=0
     maxrow=nrows
     mincol=0
     maxcol=ncols
 
+
     ## Create a binary matrix that will flag pixels which have already been processed
     processed_status=np.zeros((nrows, ncols))
     
 
+    for a_row in range(minrow,maxrow):
 
+        for a_col in range(mincol,maxcol):
 
-    region_counter=0
-
-    for a_row in range(0,maxrow):
-        
-
-        for a_col in range(0,maxcol):
-            
-            region_coords=[]
-     
-            
+          
             if processed_status[a_row,a_col]==0:
-                ## Add to counter
-                region_counter+=1
-                
+
+                ## Initialize Region Coordinates
+                region_coords=[]
+
+                neighbor_distinct_vals=[]
+
 
                 ## Establish a waiting queue
                 waiting_queue=[(a_row,a_col)]
@@ -113,11 +99,11 @@ def main():
 
 
 
-                    # if processed_status[row, col]!=0:
-                    #     continue
+                    if processed_status[row, col]==1:
+                        continue
 
 
-                    processed_status[row, col]=region_counter
+                    processed_status[row, col]=1
 
 
 
@@ -131,8 +117,11 @@ def main():
                     valid_neighbors=[]
                     coords_to_check=[]
 
+
+                    ## Add four neighbors (will check later if they are valid pixels)
                     ## Add pixel above
                     coords_to_check.append((row-1,col))
+                    
                     ## Add pixel below
                     coords_to_check.append((row+1,col))
                     
@@ -141,20 +130,18 @@ def main():
                     
                     ## Add pixel to the left
                     coords_to_check.append((row,col-1))
-            
-                    ## Case where neighbor connectivity is 8 
-                    if neighbor_connectivity==8:
-                        ## Add pixel diagonally upper left 
-                        coords_to_check.append((row-1,col-1))
 
-                        ## Add pixel diagonally upper right
-                        coords_to_check.append((row-1,col+1))
+                    ## Add pixel diagonally upper left 
+                    coords_to_check.append((row-1,col-1))
 
-                        ## Add pixel diagonally lower left
-                        coords_to_check.append((row+1,col-1))
+                    ## Add pixel diagonally upper right
+                    coords_to_check.append((row-1,col+1))
 
-                        ## Add pixel diagonally lower right
-                        coords_to_check.append((row+1,col+1))
+                    ## Add pixel diagonally lower left
+                    coords_to_check.append((row+1,col-1))
+
+                    ## Add pixel diagonally lower right
+                    coords_to_check.append((row+1,col+1))
 
                     ## Ensure that pixel coordinates which exceed the image dimension are NOT added
                     for coord in coords_to_check:
@@ -177,24 +164,29 @@ def main():
 
                     ## Check if the neighbor matches the pixel intensity of a selected pixel and also ensure that it hasn't been processed.
                         if img[row_idx,col_idx]==selected_pixel_intensity and processed_status[row_idx,col_idx]==0:
-                           
                         
                             ## Add the neighbor pixel to the waiting queue
 
                             waiting_queue.append((row_idx,col_idx))
-                            
-                            ## Add processed status
-                            processed_status[row_idx,col_idx]=region_counter
+
+                        elif img[row_idx,col_idx]!=selected_pixel_intensity:
+
+                            ## Add pixel intensity to neighbors list
+                            neighbor_distinct_vals.append(img[row_idx,col_idx])
+
+    
+            ## Set output to 255 if local minimum is detected
+            if len(neighbor_distinct_vals)>0 and selected_pixel_intensity>max(neighbor_distinct_vals):
+                for row_idx, col_idx in region_coords:
+                    out[row_idx, col_idx] = 255  # Mark local maxima flat zones in white
+
+    ## Output image to file 
+    
+    cv2.imwrite(output_image_path,out)
+    return out
 
 
-    ## Get the last region
-    max_region=np.max(processed_status)
 
-    with open(output_text_path,'w') as file:
-        file.write(str(max_region))
-        file.close()
-
-    return max_region
-        
 if __name__ == "__main__":
     main()
+        
