@@ -11,7 +11,7 @@ def main():
     Checks if the flatzone of a given pixel for an image is a local maxima.
     
     Usage:
-      python exercise_13b.py <input_image_path> <input_text_file> <output_text_path>
+      python exercise_13a.py <input_image_path> <input_text_file> <output_text_path>
       
       where:
        - <input_image_path> is the path to the input PGM image
@@ -36,7 +36,7 @@ def main():
         print("No arguments provided. Using default values:")
         print("  Input image:", input_image_path)
     elif len(sys.argv) < 4:
-        print("Usage: python exercise_13a.py <input_image_path> <input_text_file>")
+        print("Usage: python exercise_13a.py <input_image_path> <input_text_file> <output_text_path>")
         sys.exit(1)
     else:
         input_image_path = sys.argv[1]

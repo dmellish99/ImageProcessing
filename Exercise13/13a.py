@@ -37,7 +37,7 @@ def main():
         print("No arguments provided. Using default values:")
         print("  Input image:", input_image_path)
     elif len(sys.argv) < 4:
-        print("Usage: python exercise_13a.py <input_image_path> <input_text_file>")
+        print("Usage: python exercise_13a.py <input_image_path> <input_text_file> <output_text_path>")
         sys.exit(1)
     else:
         input_image_path = sys.argv[1]

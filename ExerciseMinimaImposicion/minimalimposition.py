@@ -78,55 +78,101 @@ def compare_images(img1, img2):
 
 
 
-def custom_erosion(img, kernel_size):
+import numpy as np
+
+import numpy as np
+
+def custom_erosion(img, kernel_size, connectivity):
     """
     Perform morphological erosion on a grayscale image.
 
     Args:
         img (numpy.ndarray): Grayscale image.
         kernel_size (int): Size of the square kernel (should be odd).
+        connectivity (int): Neighbor connectivity (4 or 8).
 
     Returns:
-        numpy.ndarray: Eroded image.
+        numpy.ndarray: The eroded image.
     """
     h, w = img.shape
     pad = kernel_size // 2
-    out = np.zeros_like(img)
+    out = np.copy(img)  # Copy input image
 
+    # Define 4-connectivity neighbors
+    neighbor_offsets = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+    # If 8-connectivity is chosen, add diagonal neighbors
+    if connectivity == 8:
+        neighbor_offsets += [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+
+    # Iterate over every pixel
     for y in range(h):
         for x in range(w):
-            # Define the neighborhood bounds considering image limits.
-            y_start = max(0, y - pad)
-            y_end = min(h, y + pad + 1)
-            x_start = max(0, x - pad)
-            x_end = min(w, x + pad + 1)
+            # List to store neighbor pixel values
+            neighbor_values = [img[y, x]]  # Include center pixel
 
-            # Extract the valid neighborhood region.
-            roi = img[y_start:y_end, x_start:x_end]
+            # Check neighbors based on connectivity
+            for dy, dx in neighbor_offsets:
+                ny, nx = y + dy, x + dx
+                if 0 <= ny < h and 0 <= nx < w:  # Ensure inside bounds
+                    neighbor_values.append(img[ny, nx])
 
-            # Assign the minimum value found in the region.
-            out[y, x] = np.min(roi)
+            # Assign the minimum value from valid neighbors
+            out[y, x] = min(neighbor_values)
 
     return out
-    
 
 
-def imMinimaImpose (imageInPath,imageInMarkersPath,connectivity,imageOut):
+
+def main ():
+
     """
     Reads a grayscale image PGM along with a marker image and imposes the Minima.
+
     
-    Args:
-        imageInPath (str): input image file path.
-        image_2 (str): input marker image file path.
-        connectivity (int): if the 
-        
-    Returns:
-        inf_img: The resulting image obtained by taking the pixel-wise minimum.
+    Usage:
+      python exercise_12a.py <input_image_path> <input_text_file> <output_text_path>
+      
+      where:
+       - <input_image_path> is the path to the input PGM image
+       - <input_image_markers_path> is the path to the input image marker PGM_image
+       - <connectivity> is the amount of connectivity
+       - <output_image_path> is the path to the output txt file
+       
+    If no arguments are provided, default values are used:
+      - input_image: src/micro24_20060309_grad.pgm.pgm
+      - connectivity: 8 
+      - input_image_markers_path: src/micro24_20060309_markersinsideandfond.pgm
+      - output_text_path will be provided in output/exercise_11_minima_imposition_output.pgm'
+    
     """
 
-    img=cv2.imread(imageInPath, cv2.IMREAD_GRAYSCALE)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
 
-    img_markers=cv2.imread(imageInMarkersPath, cv2.IMREAD_GRAYSCALE)
+    if len(sys.argv) == 1:
+        input_image_path = os.path.join(script_dir, "src", "micro24_20060309_grad.pgm")
+        connectivity=8
+        output_image_path='output/exercise_11_minima_imposition.pgm'
+        input_image_markers_path='src/micro24_20060309_markersinsideandfond.pgm'
+        print("No arguments provided. Using default values:")
+        print("  Input image:", input_image_path)
+    elif len(sys.argv) < 5:
+        print("Usage: python exercise_11minimalimposition.py <input_image_path> <input_image_markers_path> <input_text_file> <output_text_path>")
+        sys.exit(1)
+    else:
+        input_image_path=sys.argv[1]
+        connectivity=int(sys.argv[2])
+        input_image_markers_path=sys.argv[3]
+        output_text_path=sys.argv[4]
+        
+
+    print(input_image_path)
+
+
+    
+    img=cv2.imread(input_image_path, cv2.IMREAD_GRAYSCALE)
+
+    img_markers=cv2.imread(input_image_markers_path, cv2.IMREAD_GRAYSCALE)
 
     ## Invert the image
     img_markers_inv=img_markers
@@ -152,22 +198,23 @@ def imMinimaImpose (imageInPath,imageInMarkersPath,connectivity,imageOut):
     while (compare_images(cur_image,last_image)==0):
         last_image=cur_image
 
-        erosion=custom_erosion(cur_image,3)
+        erosion=custom_erosion(cur_image,3,connectivity)
 
         cur_image=sup_images(erosion,img_prime)
 
 
     ## Write to filepath
-    cv2.imwrite(imageOut,cur_image)
+    cv2.imwrite(output_image_path,cur_image)
     return cur_image
 
 
     
 
-test_image=imMinimaImpose('src/micro24.pgm','src/micro24_20060309_markersinsideandfond.pgm',8,'output/ gradient micro24_mod.pgm')
+# test_image=imMinimaImpose('src/micro24.pgm','src/micro24_20060309_markersinsideandfond.pgm',8,'output/ gradient micro24_mod.pgm')
 
 
-
+if __name__ == "__main__":
+    main()
 
 
 

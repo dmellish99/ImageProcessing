@@ -38,7 +38,7 @@ def main():
         print("  Input image:", input_image_path)
         print()
     elif len(sys.argv) < 4:
-        print("Usage: python exercise_12a.py <input_image_path> <input_text_file>")
+        print("Usage: python exercise_12a.py <input_image_path> <input_text_file> <output_text_path>")
         sys.exit(1)
     else:
         input_image_path=sys.argv[1]
