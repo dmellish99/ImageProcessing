@@ -9,18 +9,8 @@ import cv2
 import numpy as np
 
 
-img=cv2.imread('src/wheel.png',cv2.IMREAD_GRAYSCALE)
+img=cv2.imread('src/Lenna.png',cv2.IMREAD_GRAYSCALE)
 
-edges = cv2.Canny(img, threshold1=50, threshold2=150)
-
-
-
-
-## Apply erosion to get rid of inside of wheel
-
-
-# print(hierarchy)
-cv2.imwrite('output/test_image.png',edges)
 
 
 # Creating kernel 
@@ -29,35 +19,27 @@ kernel = np.ones((3, 3), np.uint8)
 # Using cv2.erode() method  
 img_erode= cv2.erode(img, kernel,iterations=3)  
 
-img_out=img-img_erode
-
-
+ ## Establish dimensinos of image
 nrows=img.shape[0]
-ncols=img.shape[1]\
+ncols=img.shape[1]
+
+
+## Set for output image
+out=np.zeros((nrows, ncols))
 
 minrow=0
 maxrow=nrows
 mincol=0
 maxcol=ncols
 
-
-## Apply a hollow circle to 'cut' the teeth into distinct regions
-x_c, y_c = ncols//2-5, nrows//2 -5
-r = 218
-
-color=0
-
-for y in range(img_out.shape[0]):
-    for x in range(img_out.shape[1]):
-        if (x - x_c) ** 2 + (y - y_c) ** 2 <= r ** 2:
-            img_out[y, x] = color  # Set pixel color inside the circle
-
-img=img_out 
-
 ## Create a binary matrix that will flag pixels which have already been processed
-processed_status=np.zeros((nrows, ncols))
+processed_status=np.zeros((maxrow, maxcol))
 
 region_counter=0
+
+
+
+
 
 
 ## Run flatzone detection algo
@@ -141,19 +123,20 @@ for a_row in range(0,nrows):
                     
                     if (row_idx>=minrow and row_idx<=maxrow-1) and (col_idx>=mincol and col_idx<=maxcol-1):
                         valid_neighbors.append((row_idx,col_idx))
-            
+
+                neighbor_total=0
                 ## Iterate through each neighbor of the valid pixels to check
                 for neighbor in valid_neighbors:
 
                     row_idx=neighbor[0]
                     col_idx=neighbor[1]
-
+                    neighbor_total+=img[row_idx,col_idx]
                     # neighbor_distinct_vals.append(img[row_idx,col_idx])
 
 
 
                 ## Check if the neighbor matches the pixel intensity of a selected pixel and also ensure that it hasn't been processed.
-                    if img[row_idx,col_idx]==selected_pixel_intensity and processed_status[row_idx,col_idx]==0:
+                    if img[row_idx,col_idx]<70 and processed_status[row_idx,col_idx]==0 and neighbor_total>=400:
                         
                     
                         ## Add the neighbor pixel to the waiting queue
@@ -161,18 +144,11 @@ for a_row in range(0,nrows):
                         waiting_queue.append((row_idx,col_idx))
                         
                         ## Add processed status
-                        processed_status[row_idx,col_idx]=region_counter
+                        processed_status[row_idx,col_idx]=1
 
+                        out[row_idx,col_idx]=255
 
-## Get the last region
-max_region=np.max(processed_status)
-
-with open('output/exercise_s1c_output.txt','w') as file:
-    file.write(str(max_region))
-    file.close()
-
-
-
+cv2.imwrite('output/markers.png',out)
 
 # def main():
 
