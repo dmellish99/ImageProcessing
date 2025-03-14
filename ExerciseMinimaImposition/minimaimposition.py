@@ -124,7 +124,7 @@ def custom_erosion(img, kernel_size, connectivity):
 
 
 
-def main ():
+def run ():
 
     """
     Reads a grayscale image PGM along with a marker image and imposes the Minima.
@@ -152,8 +152,8 @@ def main ():
     if len(sys.argv) == 1:
         input_image_path = os.path.join(script_dir, "src", "micro24_20060309_grad.pgm")
         connectivity=8
-        output_image_path='output/exercise_11_minima_imposition.pgm'
-        input_image_markers_path='src/micro24_20060309_markersinsideandfond.pgm'
+        output_image_path='ExerciseMinimaImposition/output/exercise_11_minima_imposition.pgm'
+        input_image_markers_path='ExerciseMinimaImposition/src/micro24_20060309_markersinsideandfond.pgm'
         print("No arguments provided. Using default values:")
         print("  Input image:", input_image_path)
     elif len(sys.argv) < 5:
@@ -214,7 +214,7 @@ def main ():
 
 
 if __name__ == "__main__":
-    main()
+    run()
 
 
 

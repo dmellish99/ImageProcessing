@@ -6,7 +6,7 @@ import os
 
 
 
-def main():
+def run():
 
     """
     Checks if the flatzone of a given pixel for an image is a local minima.
@@ -31,11 +31,12 @@ def main():
 
     if len(sys.argv) == 1:
         input_image_path = os.path.join(script_dir, "src", "immed_gray_inv.pgm")
-        input_text_file = "exercise_12a_input_01.txt"
-        output_text_path='output/exercise_13a_output.txt'
+        input_text_file = "Exercise13/exercise_13a_input_01.txt"
+        output_text_path='Exercise13/output/exercise_13a_output.txt'
 
         print("No arguments provided. Using default values:")
         print("  Input image:", input_image_path)
+        print("  Output Text:", output_text_path)
     elif len(sys.argv) < 4:
         print("Usage: python exercise_13a.py <input_image_path> <input_text_file> <output_text_path>")
         sys.exit(1)
@@ -226,4 +227,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run()

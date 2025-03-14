@@ -5,13 +5,13 @@ import numpy as np
 import os
 
 
-def main():
+def run():
 
     """
     Checks if the flatzone of a given pixel for an image is a local maxima.
     
     Usage:
-      python exercise_13a.py <input_image_path> <input_text_file> <output_text_path>
+      python exercise_13b.py <input_image_path> <input_text_file> <output_text_path>
       
       where:
        - <input_image_path> is the path to the input PGM image
@@ -30,13 +30,15 @@ def main():
 
     if len(sys.argv) == 1:
         input_image_path = os.path.join(script_dir, "src", "immed_gray_inv.pgm")
-        input_text_file = "exercise_12a_input_01.txt"
-        output_text_path='output/exercise_13a_output.txt'
+        input_text_file = "Exercise13/exercise_13b_input_01.txt"
+        output_text_path='Exercise13/output/exercise_13b_output.txt'
 
         print("No arguments provided. Using default values:")
         print("  Input image:", input_image_path)
+        print("  Output Text:", output_text_path)
+
     elif len(sys.argv) < 4:
-        print("Usage: python exercise_13a.py <input_image_path> <input_text_file> <output_text_path>")
+        print("Usage: python exercise_13b.py <input_image_path> <input_text_file> <output_text_path>")
         sys.exit(1)
     else:
         input_image_path = sys.argv[1]
@@ -221,4 +223,4 @@ def main():
 #     file.close()
 
 if __name__ == "__main__":
-    main()
+    run()

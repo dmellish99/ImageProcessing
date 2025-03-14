@@ -6,7 +6,7 @@ import os
 
 
 
-def main():
+def run():
 
     """
     Checks for all flatzones of an image which are local maxima.
@@ -32,10 +32,10 @@ def main():
 
     if len(sys.argv) == 1:
         input_image_path = os.path.join(script_dir, "src", "immed_gray_inv_20051218_frgr4.pgm")
-        output_image_path="output/exercise_13c_output.pgm"
+        output_image_path="Exercise13/output/exercise_13c_output.pgm"
         print("No arguments provided. Using default values:")
         print("  Input image:", input_image_path)
-        print("  Input image:", output_image_path)
+        print("  Output image:", output_image_path)
 
     elif len(sys.argv) < 3:
         print("Usage: python exercise_13c.py <i> <input_image_path> <output_image_path>")
@@ -187,5 +187,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run()
         

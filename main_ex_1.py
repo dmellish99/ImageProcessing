@@ -24,30 +24,30 @@ def main():
     
     while True:
         print("\n=== EXERCISE MENU ===")
-        print("11a) Exercise 11a")
-        print("11b) Minima Imposition")
-        print("12a) Exercise 12a")
-        print("13a) Exercise 13a")
-        print("13b) Exercise 13b")
-        print("13c) Exercise 13c")
-        print("13d) Exercise 13d")
+        print("1) Exercise 11a")
+        print("2) Minima Imposition")
+        print("3) Exercise 12a")
+        print("4) Exercise 13a")
+        print("5) Exercise 13b")
+        print("6) Exercise 13c")
+        print("7) Exercise 13d")
         print("0) Exit")
         
         choice = input("Select an exercise: ").strip()
         
-        if choice == "11a":
+        if choice == "1":
             run_11a()
-        elif choice == "11b":
+        elif choice == "2":
             run_minima_imposition()
-        elif choice == "12a":
+        elif choice == "3":
             run_12a()
-        elif choice == "13a":
+        elif choice == "4":
             run_13a()
-        elif choice == "13b":
+        elif choice == "5":
             run_13b()
-        elif choice == "3a":
+        elif choice == "6":
             run_13c()
-        elif choice == "3b":
+        elif choice == "7":
             run_13d()
         elif choice == "0":
             print("Exiting...")
